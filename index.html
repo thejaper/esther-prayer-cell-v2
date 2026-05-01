@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esther Prayer Cell CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
+    <style>
+        * { font-family: 'DM Sans', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(109, 62, 232, 0.25); border-radius: 3px; transition: background 0.2s ease; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(109, 62, 232, 0.45); }
+
+        .shadow-card { box-shadow: 0 2px 8px rgba(109, 62, 232, 0.08), 0 1px 3px rgba(109, 62, 232, 0.05); }
+        .shadow-card-hover { box-shadow: 0 4px 16px rgba(109, 62, 232, 0.12), 0 2px 6px rgba(109, 62, 232, 0.07); }
+        .shadow-glow { box-shadow: 0 8px 30px rgba(109, 62, 232, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-up { animation: fadeUp 0.4s ease both; }
+
+        .scroll-container { -webkit-overflow-scrolling: touch; }
+
+        .dashboard-content { overflow-y: hidden; }
+        @media (max-width: 768px) { .dashboard-content { overflow-y: auto; } }
+
+        .dailybread-card { min-height: auto; }
+        @media (max-width: 768px) { .dailybread-card { min-height: 280px !important; } }
+
+        .sidebar-mobile { transition: transform 0.3s ease; }
+
+        .active-nav-item { background: #6D3EE8; color: white; }
+
+        .gradient-purple { background: linear-gradient(135deg, #6D3EE8 0%, #7C5FEF 60%, #8B7FED 100%); }
+        .gradient-pastel-1 { background: linear-gradient(135deg, #D8BFD8 0%, #E6D7E6 60%, #F0E8F5 100%); }
+        .gradient-pastel-2 { background: linear-gradient(135deg, #E8D4E8 0%, #F0D4E6 60%, #F5D9F0 100%); }
+        .gradient-pastel-3 { background: linear-gradient(135deg, #D8EBE8 0%, #D4E8DC 60%, #D9F0ED 100%); }
+        .gradient-pastel-4 { background: linear-gradient(135deg, #F5E6D3 0%, #FFF8DC 60%, #FFFACD 100%); }
+        .gradient-pastel-5 { background: linear-gradient(135deg, #C084FC 0%, #D8A5FF 60%, #E9B8FF 100%); }
+        .gradient-pastel-6 { background: linear-gradient(135deg, #F0C4E8 0%, #F8A4D0 60%, #F472B6 100%); }
+    </style>
+</head>
+<body class="bg-purple-100">
+    <div class="flex h-screen bg-purple-100 relative">
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="hidden md:hidden fixed bottom-4 right-4 z-40 w-11 h-11 rounded-lg cursor-pointer flex items-center justify-center" style="background: #6D3EE8; color: white; border: none;">
+            <iconify-icon icon="mdi:menu" style="font-size: 24px;"></iconify-icon>
+        </button>
+
+        <!-- Sidebar Navigation -->
+        <div id="sidebar" class="sidebar-mobile fixed md:static left-0 top-0 h-screen md:h-auto w-20 md:w-20 md:relative z-30" style="background: white; border-radius: 0 24px 24px 0; display: flex; flex-direction: column; align-items: center; padding: 24px 0; gap: 8px; transform: translateX(-100%);">
+            <button onclick="showSection('dashboard')" class="w-12 h-12 rounded-lg flex items-center justify-center cursor-pointer transition-all" style="background: #6D3EE8; color: white;" title="Dashboard">
+                <iconify-icon icon="mdi:chart-box" style="font-size: 22px;"></iconify-icon>
+            </button>
+            <button onclick="showSection('people')" class="w-12 h-12 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:bg-gray-100" style="color: #94A3B8;" title="Members">
+                <iconify-icon icon="mdi:account-multiple" style="font-size: 22px;"></iconify-icon>
+            </button>
+            <button onclick="showSection('events')" class="w-12 h-12 rounded-lg flex items-center justify-center cursor-pointer transition-all hover:bg-gray-100" style="color: #94A3B8;" title="Events">
+                <iconify-icon icon="mdi:calendar-outline" style="font-size: 22px;"></iconify-icon>
+            </button>
+            <button onclick="toggleSidebar()" style="background: none; border: none; cursor: pointer; color: #6D3EE8; font-size: 18px; margin-top: auto; padding: 8px; display: none;" id="toggleBtn">
+                <iconify-icon icon="mdi:chevron-right" style="font-size: 22px;"></iconify-icon>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-hidden w-full pb-20 md:pb-0">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section w-full h-full flex flex-col overflow-x-hidden animate-fade-up">
+                <div class="p-4 md:p-6 space-y-3 md:space-y-4 md:flex-1 flex flex-col dashboard-content">
+                    <!-- Greeting Card -->
+                    <div class="relative rounded-3xl overflow-hidden flex-shrink-0 p-5 md:p-10 text-white gradient-purple">
+                        <div class="relative z-10">
+                            <h1 class="text-xl md:text-4xl font-bold mb-1">Praise the LORD!</h1>
+                            <p class="text-base md:text-2xl font-normal opacity-90 m-0">Welcome to Esther Prayer Cell</p>
+                        </div>
+                        <img src="women.PNG" alt="Women Prayer Cell" class="md:hidden absolute top-0.5 right-2.5 h-24 w-auto z-5">
+                        <img src="women.PNG" alt="Women Prayer Cell" class="hidden md:block absolute top-0.5 right-12 h-96 w-auto z-5">
+                    </div>
+
+                    <!-- KPI Stats - 3 Columns -->
+                    <div class="grid grid-cols-3 gap-2 md:gap-4 flex-shrink-0">
+                        <div class="bg-white rounded-xl shadow-card p-3 md:p-5 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 hover:shadow-card-hover transition-shadow">
+                            <div class="w-8 h-8 md:w-11 md:h-11 rounded-lg flex items-center justify-center flex-shrink-0 text-white mx-auto md:mx-0" style="background: #6D3EE8;">
+                                <iconify-icon icon="mdi:account-group" class="text-base md:text-lg"></iconify-icon>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <div class="text-base md:text-2xl font-bold" style="color: #1E293B;">324</div>
+                                <div class="text-xs md:text-sm" style="color: #64748B; margin-top: 4px;">Members</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-card p-3 md:p-5 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 hover:shadow-card-hover transition-shadow">
+                            <div class="w-8 h-8 md:w-11 md:h-11 rounded-lg flex items-center justify-center flex-shrink-0 text-white mx-auto md:mx-0" style="background: #6D3EE8;">
+                                <iconify-icon icon="mdi:calendar-multiple" class="text-base md:text-lg"></iconify-icon>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <div class="text-base md:text-2xl font-bold" style="color: #1E293B;">8</div>
+                                <div class="text-xs md:text-sm" style="color: #64748B; margin-top: 4px;">Events</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-card p-3 md:p-5 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 hover:shadow-card-hover transition-shadow">
+                            <div class="w-8 h-8 md:w-11 md:h-11 rounded-lg flex items-center justify-center flex-shrink-0 text-white mx-auto md:mx-0" style="background: #6D3EE8;">
+                                <iconify-icon icon="mdi:check-circle" class="text-base md:text-lg"></iconify-icon>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <div class="text-base md:text-2xl font-bold" style="color: #1E293B;">87%</div>
+                                <div class="text-xs md:text-sm" style="color: #64748B; margin-top: 4px;">Attendance</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Quick Actions -->
+                    <div class="flex gap-3 md:hidden flex-shrink-0">
+                        <button onclick="showAddPersonModal()" class="flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm text-white flex items-center justify-center gap-1.5 transition-all hover:opacity-90" style="background: #6D3EE8;">
+                            <iconify-icon icon="mdi:plus" style="font-size: 16px;"></iconify-icon>
+                            <span>Member</span>
+                        </button>
+                        <button onclick="showAddEventModal()" class="flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm text-white flex items-center justify-center gap-1.5 transition-all hover:opacity-90" style="background: #6D3EE8;">
+                            <iconify-icon icon="mdi:plus" style="font-size: 16px;"></iconify-icon>
+                            <span>Event</span>
+                        </button>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 md:flex-1 md:min-h-0">
+                        <!-- Today Events -->
+                        <div class="bg-white rounded-2xl shadow-card p-4 md:p-5 col-span-1 md:col-span-2 lg:col-span-2 overflow-hidden flex flex-col">
+                            <h3 class="text-base font-bold mb-3.5" style="color: #1E293B;">Today Events</h3>
+                            <div id="dashboardEventsContainer" class="space-y-3 flex-1 overflow-y-auto scroll-container">
+                                <!-- Events rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Daily Bread -->
+                        <div class="bg-white rounded-2xl shadow-card p-5 overflow-hidden flex flex-col dailybread-card">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-3.5 flex-shrink-0 gap-2">
+                                <h3 class="text-base font-bold" style="color: #1E293B; margin: 0;">Daily Bread</h3>
+                                <p class="text-xs md:text-sm" style="color: #64748B; margin: 0;">May 1, 2026</p>
+                            </div>
+                            <div class="space-y-3 overflow-hidden text-sm">
+                                <div>
+                                    <p class="font-bold mb-2" style="color: #5E2DD8; margin: 0;">Old Testament</p>
+                                    <div class="p-3 rounded-lg space-y-1" style="background: #EEF4FF;">
+                                        <p class="font-semibold m-0" style="color: #1E293B;">Genesis 1-2</p>
+                                        <p class="font-semibold m-0" style="color: #1E293B;">Exodus 3-5</p>
+                                        <p class="font-semibold m-0" style="color: #1E293B;">Psalms 1-3</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="font-bold mb-2" style="color: #5E2DD8; margin: 0;">New Testament</p>
+                                    <div class="p-3 rounded-lg space-y-1" style="background: #D1F3E0;">
+                                        <p class="font-semibold m-0" style="color: #1E293B;">Matthew 1-2</p>
+                                        <p class="font-semibold m-0" style="color: #1E293B;">Mark 5-7</p>
+                                        <p class="font-semibold m-0" style="color: #1E293B;">Romans 8-10</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Members Section -->
+            <section id="people" class="section hidden w-full h-full flex flex-col overflow-x-hidden animate-fade-up">
+                <div class="p-4 md:p-8 space-y-6 md:flex-1 flex flex-col overflow-y-auto scroll-container">
+                    <div>
+                        <h2 class="text-2xl md:text-4xl font-bold" style="color: #1E293B;">Members</h2>
+                        <p class="text-sm md:text-base mt-2" style="color: #64748B;">Manage prayer cell members</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden flex flex-col">
+                        <div class="p-4 md:p-6 border-b flex flex-col md:flex-row gap-3 md:gap-4 md:items-center" style="border-color: #E2E8F0;">
+                            <input type="text" placeholder="Search members..." class="flex-1 px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                            <button onclick="showAddPersonModal()" class="px-4 md:px-6 py-2.5 rounded-lg font-semibold text-sm md:text-base text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 flex-shrink-0 w-full md:w-auto" style="background: #6D3EE8;">
+                                <iconify-icon icon="mdi:plus" style="font-size: 16px;"></iconify-icon>
+                                <span class="text-xs md:text-base">Add</span>
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs md:text-sm">
+                                <thead class="border-b" style="background: #F8FAFC; border-color: #E2E8F0;">
+                                    <tr>
+                                        <th class="px-3 md:px-6 py-3 md:py-4 text-left font-semibold" style="color: #475569;">Name</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-4 text-left font-semibold hidden sm:table-cell" style="color: #475569;">Email</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-4 text-left font-semibold hidden md:table-cell" style="color: #475569;">Phone</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-4 text-left font-semibold" style="color: #475569;">Role</th>
+                                        <th class="px-3 md:px-6 py-3 md:py-4 text-right font-semibold" style="color: #475569;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-purple-50 transition-colors" style="border-color: #E2E8F0;">
+                                        <td class="px-3 md:px-6 py-3 md:py-4 font-semibold" style="color: #1E293B;">John Doe</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 hidden sm:table-cell" style="color: #475569;">john@example.com</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 hidden md:table-cell" style="color: #475569;">+1 (555) 123-4567</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold" style="background: #EEF4FF; color: #5E2DD8;">Member</span></td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 text-right"><button style="color: #6D3EE8; cursor: pointer; background: none; border: none;" class="text-sm md:text-base"><iconify-icon icon="mdi:pencil"></iconify-icon></button></td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-purple-50 transition-colors" style="border-color: #E2E8F0;">
+                                        <td class="px-3 md:px-6 py-3 md:py-4 font-semibold" style="color: #1E293B;">Sarah Anderson</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 hidden sm:table-cell" style="color: #475569;">sarah@example.com</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 hidden md:table-cell" style="color: #475569;">+1 (555) 234-5678</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold" style="background: #D1F3E0; color: #22863A;">Leader</span></td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 text-right"><button style="color: #6D3EE8; cursor: pointer; background: none; border: none;" class="text-sm md:text-base"><iconify-icon icon="mdi:pencil"></iconify-icon></button></td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-purple-50 transition-colors" style="border-color: #E2E8F0;">
+                                        <td class="px-3 md:px-6 py-3 md:py-4 font-semibold" style="color: #1E293B;">Michael Johnson</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 hidden sm:table-cell" style="color: #475569;">michael@example.com</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 hidden md:table-cell" style="color: #475569;">+1 (555) 345-6789</td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold" style="background: #FFF8DC; color: #B45309;">Volunteer</span></td>
+                                        <td class="px-3 md:px-6 py-3 md:py-4 text-right"><button style="color: #6D3EE8; cursor: pointer; background: none; border: none;" class="text-sm md:text-base"><iconify-icon icon="mdi:pencil"></iconify-icon></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section id="events" class="section hidden w-full h-full flex flex-col overflow-x-hidden animate-fade-up">
+                <div class="p-4 md:p-8 space-y-6 md:flex-1 flex flex-col overflow-y-auto scroll-container">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl md:text-4xl font-bold" style="color: #1E293B;">Events</h2>
+                            <p class="text-sm md:text-base mt-2" style="color: #64748B;">Manage prayer cell events</p>
+                        </div>
+                        <button onclick="showAddEventModal()" class="px-4 md:px-6 py-2.5 rounded-lg font-semibold text-sm md:text-base text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 flex-shrink-0 w-full md:w-auto" style="background: #6D3EE8;">
+                            <iconify-icon icon="mdi:plus" style="font-size: 16px;"></iconify-icon>
+                            <span>Create</span>
+                        </button>
+                    </div>
+
+                    <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <!-- Events rendered here -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div id="addPersonModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" style="backdrop-filter: blur(4px);">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-card p-6">
+            <h3 class="text-xl md:text-2xl font-bold mb-6" style="color: #1E293B;">Add New Member</h3>
+            <div class="space-y-4 mb-6">
+                <input type="text" placeholder="Full Name" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                <input type="email" placeholder="Email Address" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                <input type="tel" placeholder="Phone Number" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                <select class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;">
+                    <option>Select Role</option>
+                    <option>Member</option>
+                    <option>Leader</option>
+                    <option>Volunteer</option>
+                </select>
+            </div>
+            <div class="flex gap-3 flex-col md:flex-row">
+                <button onclick="closeAddPersonModal()" class="flex-1 px-4 py-2.5 rounded-lg font-semibold text-sm md:text-base transition-all hover:opacity-90" style="background: #F1F5F9; color: #6D3EE8; border: 1px solid #E2E8F0;">Cancel</button>
+                <button class="flex-1 px-4 py-2.5 rounded-lg font-semibold text-sm md:text-base text-white transition-all hover:opacity-90" style="background: #6D3EE8;">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="addEventModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" style="backdrop-filter: blur(4px);">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-card p-6 max-h-90vh overflow-y-auto scroll-container">
+            <h3 class="text-xl md:text-2xl font-bold mb-6" style="color: #1E293B;">Create New Event</h3>
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold mb-1.5" style="color: #334155;">Event Name</label>
+                    <input type="text" id="eventName" placeholder="e.g., Sunday Service" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold mb-1.5" style="color: #334155;">Date</label>
+                    <input type="date" id="eventDate" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold mb-1.5" style="color: #334155;">Time</label>
+                    <input type="time" id="eventTime" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold mb-1.5" style="color: #334155;">Organiser Name</label>
+                    <input type="text" id="eventOrganiser" placeholder="e.g., Priyanka" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold mb-1.5" style="color: #334155;">Host Name</label>
+                    <input type="text" id="eventHost" placeholder="e.g., Padma" class="w-full px-4 py-2.5 border rounded-lg text-sm md:text-base focus:outline-none" style="border-color: #E2E8F0; color: #1E293B;" />
+                </div>
+            </div>
+            <div class="flex gap-3 flex-col md:flex-row">
+                <button onclick="closeAddEventModal()" class="flex-1 px-4 py-2.5 rounded-lg font-semibold text-sm md:text-base transition-all hover:opacity-90" style="background: #F1F5F9; color: #6D3EE8; border: 1px solid #E2E8F0;">Cancel</button>
+                <button onclick="saveEvent()" class="flex-1 px-4 py-2.5 rounded-lg font-semibold text-sm md:text-base text-white transition-all hover:opacity-90" style="background: #6D3EE8;">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const EVENTS_STORAGE_KEY = 'epcEvents';
+        const SIDEBAR_STATE_KEY = 'sidebarExpanded';
+        let mobileMenuOpen = false;
+
+        const DEFAULT_EVENTS = [
+            { id: 1, name: 'Sunday Service', date: '2026-05-04', time: '10:00 AM', organiser: 'Priyanka', host: 'Padma' },
+            { id: 2, name: 'Bible Study', date: '2026-05-02', time: '2:00 PM', organiser: 'John Doe', host: 'Michael Johnson' },
+            { id: 3, name: 'Prayer Meeting', date: '2026-05-03', time: '6:30 PM', organiser: 'Sarah Anderson', host: 'Emma Wilson' },
+            { id: 4, name: 'Choir Practice', date: '2026-05-05', time: '5:00 PM', organiser: 'Rachel Smith', host: 'Grace Lee' }
+        ];
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            mobileMenuOpen = !mobileMenuOpen;
+            sidebar.style.transform = mobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)';
+        }
+
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.transform = 'translateX(-100%)';
+            mobileMenuOpen = false;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const isExpanded = sidebar.classList.contains('expanded');
+
+            if (isExpanded) {
+                sidebar.classList.remove('expanded');
+                toggleBtn.innerHTML = '<iconify-icon icon="mdi:chevron-right" style="font-size: 22px;"></iconify-icon>';
+                localStorage.setItem(SIDEBAR_STATE_KEY, 'false');
+            } else {
+                sidebar.classList.add('expanded');
+                toggleBtn.innerHTML = '<iconify-icon icon="mdi:chevron-left" style="font-size: 22px;"></iconify-icon>';
+                localStorage.setItem(SIDEBAR_STATE_KEY, 'true');
+            }
+        }
+
+        function initSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+            function updateLayout() {
+                const isMobile = window.innerWidth < 768;
+                if (isMobile) {
+                    sidebar.style.position = 'fixed';
+                    sidebar.style.left = '0';
+                    sidebar.style.top = '0';
+                    sidebar.style.height = '100vh';
+                    sidebar.style.zIndex = '30';
+                    sidebar.style.transform = mobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)';
+                    toggleBtn.style.display = 'none';
+                    mobileMenuBtn.style.display = 'flex';
+                } else {
+                    sidebar.style.position = 'relative';
+                    sidebar.style.height = 'auto';
+                    sidebar.style.transform = 'none';
+                    toggleBtn.style.display = 'flex';
+                    mobileMenuBtn.style.display = 'none';
+                    mobileMenuOpen = false;
+                }
+            }
+
+            updateLayout();
+            window.addEventListener('resize', updateLayout);
+        }
+
+        function getEvents() {
+            const stored = localStorage.getItem(EVENTS_STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveEvent() {
+            const name = document.getElementById('eventName').value.trim();
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+            const organiser = document.getElementById('eventOrganiser').value.trim();
+            const host = document.getElementById('eventHost').value.trim();
+
+            if (!name || !date || !time || !organiser || !host) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const event = { id: Date.now(), name, date, time, organiser, host };
+
+            const events = getEvents();
+            events.push(event);
+            localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
+
+            document.getElementById('eventName').value = '';
+            document.getElementById('eventDate').value = '';
+            document.getElementById('eventTime').value = '';
+            document.getElementById('eventOrganiser').value = '';
+            document.getElementById('eventHost').value = '';
+
+            closeAddEventModal();
+            renderDashboardEvents();
+            renderEvents();
+        }
+
+        function renderDashboardEvents() {
+            const events = getEvents();
+            const container = document.getElementById('dashboardEventsContainer');
+            if (!container) return;
+
+            const bgs = ['#FAF5FF', '#D1F3E0', '#FFF8DC', '#FCE7F3', '#F5EFFF', '#E8F5E9'];
+
+            if (events.length === 0) {
+                container.innerHTML = '<p class="text-center text-sm py-5" style="color: #64748B;">No events scheduled</p>';
+                return;
+            }
+
+            container.innerHTML = events.map((e, i) => `
+                <div style="background: ${bgs[i % 6]}; border-radius: 12px; padding: 12px 16px; display: grid; grid-template-columns: 1fr 100px 150px 150px; gap: 16px; align-items: center;">
+                    <div>
+                        <p style="font-size: 11px; color: #64748B; font-weight: 600; margin: 0 0 6px 0; text-transform: uppercase;">Event</p>
+                        <p style="font-size: 14px; font-weight: 600; color: #1E293B; margin: 0;">${e.name}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 11px; color: #64748B; font-weight: 600; margin: 0 0 6px 0; text-transform: uppercase;">Time</p>
+                        <p style="font-size: 14px; font-weight: 600; color: #1E293B; margin: 0;">${e.time}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 11px; color: #64748B; font-weight: 600; margin: 0 0 6px 0; text-transform: uppercase;">Organiser</p>
+                        <p style="font-size: 14px; font-weight: 600; color: #1E293B; margin: 0;">${e.organiser}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 11px; color: #64748B; font-weight: 600; margin: 0 0 6px 0; text-transform: uppercase;">Host</p>
+                        <p style="font-size: 14px; font-weight: 600; color: #1E293B; margin: 0;">${e.host}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEvents() {
+            const events = getEvents();
+            const container = document.getElementById('eventsGrid');
+            if (!container) return;
+
+            const gradients = ['gradient-pastel-1', 'gradient-pastel-2', 'gradient-pastel-3', 'gradient-pastel-4', 'gradient-pastel-5', 'gradient-pastel-6'];
+
+            container.innerHTML = events.map((e, i) => `
+                <div class="${gradients[i % 6]} rounded-2xl shadow-card p-6 flex flex-col gap-4 text-white">
+                    <div>
+                        <p style="font-size: 12px; opacity: 0.8; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase;">Event</p>
+                        <h3 style="font-size: 18px; font-weight: 700; margin: 0;">${e.name}</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 12px;" class="md:grid-cols-3 md:gap-4">
+                        <div>
+                            <p style="font-size: 12px; opacity: 0.8; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase;">Time</p>
+                            <p style="font-size: 15px; font-weight: 600; margin: 0;">${e.time}</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 12px; opacity: 0.8; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase;">Organiser</p>
+                            <p style="font-size: 15px; font-weight: 600; margin: 0;">${e.organiser}</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 12px; opacity: 0.8; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase;">Host</p>
+                            <p style="font-size: 15px; font-weight: 600; margin: 0;">${e.host}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteEvent(${e.id})" style="width: 100%; background: rgba(255,255,255,0.15); border: none; color: white; padding: 8px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px;"><iconify-icon icon="mdi:trash-can-outline" style="font-size: 14px;"></iconify-icon></button>
+                </div>
+            `).join('');
+        }
+
+        function deleteEvent(eventId) {
+            if (!confirm('Delete this event?')) return;
+            let events = getEvents();
+            events = events.filter(e => e.id !== eventId);
+            localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
+            renderDashboardEvents();
+            renderEvents();
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+
+            document.querySelectorAll('[title]').forEach(btn => {
+                if (['Dashboard', 'Members', 'Events'].includes(btn.getAttribute('title'))) {
+                    btn.classList.remove('active-nav-item');
+                    btn.style.color = '#94A3B8';
+                }
+            });
+
+            const titleMap = { dashboard: 'Dashboard', people: 'Members', events: 'Events' };
+            const button = document.querySelector(`[title="${titleMap[id]}"]`);
+            if (button) {
+                button.classList.add('active-nav-item');
+                button.style.color = 'white';
+            }
+
+            if (id === 'events') renderEvents();
+        }
+
+        function showAddPersonModal() { document.getElementById('addPersonModal').classList.remove('hidden'); }
+        function closeAddPersonModal() { document.getElementById('addPersonModal').classList.add('hidden'); }
+        function showAddEventModal() { document.getElementById('addEventModal').classList.remove('hidden'); }
+        function closeAddEventModal() { document.getElementById('addEventModal').classList.add('hidden'); }
+
+        window.addEventListener('click', (e) => {
+            if (e.target.id === 'addPersonModal') closeAddPersonModal();
+            if (e.target.id === 'addEventModal') closeAddEventModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem(EVENTS_STORAGE_KEY)) {
+                localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(DEFAULT_EVENTS));
+            }
+            initSidebar();
+            renderDashboardEvents();
+            renderEvents();
+        });
+    </script>
+</body>
+</html>
