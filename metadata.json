@@ -1,0 +1,8 @@
+{
+  "name": "Esther Prayer Cell CRM",
+  "description": "Esther Prayer Cell CRM featuring member management, special remembrance dates, event coordination, and an integrated Telugu & English (KJV) Holy Bible.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
